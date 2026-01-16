@@ -1,12 +1,22 @@
 const rateLimit = require("express-rate-limit");
 
-const MAX_REQUESTS_PER_HOUR = 10;
-const WINDOW_MS = 60 * 60 * 1000; // 1 hour
-const BLOCK_MS = 24 * 60 * 60 * 1000; // 24 hours
-
 const blockedIps = new Map();
 
-const CLEANUP_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
+function toInt(value, fallback) {
+  const n = parseInt(value, 10);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
+const MAX_REQUESTS_PER_HOUR = toInt(process.env.MAX_REQUESTS_PER_HOUR, 10);
+
+const WINDOW_MS = toInt(process.env.RATE_LIMIT_WINDOW_MS, 60 * 60 * 1000);
+
+const BLOCK_MS = toInt(process.env.IP_BLOCK_MS, 24 * 60 * 60 * 1000);
+
+const CLEANUP_INTERVAL_MS = toInt(
+  process.env.BLOCK_CLEANUP_INTERVAL_MS,
+  10 * 60 * 1000
+);
 
 setInterval(() => {
   const now = Date.now();
