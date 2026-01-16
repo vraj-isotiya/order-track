@@ -68,7 +68,7 @@ const limiter = rateLimit({
 
     return res.status(429).json({
       success: false,
-      message: "Rate limit exceeded. Your IP is blocked.",
+      message: `Rate limit exceeded. Your IP is blocked for ${remaining.hours} hour`,
       retry_after: remaining,
     });
   },
