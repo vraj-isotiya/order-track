@@ -24,7 +24,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/orders", orderRoutes);
-app.use("/api/shipments", shipmentRoutes);
+//app.use("/api/shipments", shipmentRoutes);
 
 app.use((req, res) => {
   return res.status(404).json({
