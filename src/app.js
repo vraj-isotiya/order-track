@@ -7,13 +7,26 @@ const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 
-const corsOptions = {
-  origin: "https://wilsoninmatepackageprogram.com",
-  methods: ["GET"],
-};
+const allowedOrigins = ["https://wilsoninmatepackageprogram.com"];
 
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow server-to-server or tools like curl/postman
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: false,
+  })
+);
+app.options("*", cors());
 
 app.use(helmet());
 app.use(express.json({ limit: "10kb" }));
