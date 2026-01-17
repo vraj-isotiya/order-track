@@ -8,7 +8,7 @@ const { errorHandler } = require("./middlewares/errorHandler");
 const app = express();
 
 const corsOptions = {
-  origin: "https://wilsoninmatepackageprogram.com/",
+  origin: "https://wilsoninmatepackageprogram.com",
   methods: ["GET"],
 };
 
