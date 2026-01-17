@@ -7,12 +7,28 @@ const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 
-const allowedOrigins = ["https://wilsoninmatepackageprogram.com"];
-
-app.use(cors());
-//app.options("*", cors());
-
 app.use(helmet());
+
+const allowedOrigin = "https://wilsoninmatepackageprogram.com";
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) {
+      return callback(new Error("CORS Error: Origin required"), false);
+    }
+
+    if (origin === allowedOrigin) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("CORS Error: Origin not allowed"), false);
+  },
+  methods: ["GET"],
+};
+
+app.use(cors(corsOptions));
+app.options("/.*splat", cors(corsOptions));
+
 app.use(express.json({ limit: "10kb" }));
 
 app.get("/", (req, res) => {
@@ -24,7 +40,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/orders", orderRoutes);
-//app.use("/api/shipments", shipmentRoutes);
+app.use("/api/shipments", shipmentRoutes);
 
 app.use((req, res) => {
   return res.status(404).json({
